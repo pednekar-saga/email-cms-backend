@@ -74,7 +74,7 @@ function getNewToken(oAuth2Client, callback) {
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function listLabels(auth) {
+function listLabels() {
    const gmail = google.gmail({ version: "v1", auth });
    gmail.users.labels.list(
       {

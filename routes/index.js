@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 var passport = require("passport");
-const { client } = require("../config");
+const { auth } = require("../config");
+const { listLabels } = require("../lib/auth");
+const { oAuth } = require("../lib/auth");
 
 /* GET Google Authentication API. */
 
@@ -12,14 +14,9 @@ router.get(
       /**
        * Mention all access scopes here
        */
-      scope: [
-         "profile",
-         "https://www.googleapis.com/auth/plus.profile.emails.read",
-         "https://mail.google.com/",
-         "https://www.googleapis.com/auth/gmail.modify",
-         "https://www.googleapis.com/auth/gmail.readonly",
-         "https://www.googleapis.com/auth/gmail.metadata"
-      ]
+      scope: auth.scope,
+      accessType: "offline",
+      approvalPrompt: "force"
    })
 );
 
@@ -32,14 +29,22 @@ router.get(
       { failureRedirect: "/failure", session: false }
    ),
    (req, res) => {
+      var { token, refreshToken, scope, token_type } = req.user;
       console.log(req.user);
-      var token = req.user.token;
+      const result = oAuth(auth, {
+         token,
+         refresh_token: refreshToken,
+         scope,
+         token_type
+      });
       res.redirect("http://127.0.0.1:3000?token=" + token);
    }
 );
 
 // get list of messages
 
-router.get("/list", (req, res) => {});
+router.get("/list", (req, res) => {
+   listLabels();
+});
 
 module.exports = router;

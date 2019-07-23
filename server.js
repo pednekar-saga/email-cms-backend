@@ -1,14 +1,14 @@
 const express = require("express");
 const app = express();
-
 const { auth, server } = require("./config");
-const authenticate = require("./lib/auth");
+const { authenticate, oAuth } = require("./lib/auth");
 const routes = require("./routes");
 
 /**
  * Authentication strategy
  */
 authenticate(auth);
+// oAuth(auth);
 
 /**
  * Routes for login
